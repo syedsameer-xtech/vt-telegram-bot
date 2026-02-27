@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+"""
+🦠 VirusTotal Telegram Bot
+A Breaking Bad-themed bot that scans files, URLs, and hashes using VirusTotal API.
+
+Author: Syed Sameer
+License: MIT (Educational Use Only)
+"""
+
 import os
 import re
 import asyncio
@@ -31,11 +40,20 @@ PREPARE_GIF_DURATION = 2  # seconds
 # ================= GIFS =================
 
 GIFS = {
+    # 📸 Before scanning - Saul Goodman preparing
     "prepare": "https://media.giphy.com/media/QNGHqtEdHDAcgDPJCj/giphy.gif",
+    
+    # 🔥 During scanning - Walter White "Let him cook"
     "cooking": "https://media.tenor.com/akRQReAe9JoAAAAM/walter-white-let-him-cook.gif",
-    "danger": "https://media.giphy.com/media/2lu3fIfUbfTStOIXx1/giphy.gif",
+    
+    # 🔴 Malicious result - Walter White "Someone cooked here"
+    "danger": "https://tenor.com/dyjRpOuEmXE.gif",
+    
+    # 🟢 Safe result - Clean/Secure animation
     "safe": "https://media.giphy.com/media/KIpm9dzD2OAK2p60Xu/giphy.gif",
-    "suspicious": "https://media.tenor.com/mH8K9vLqJ5kAAAAM/thinking-hmm.gif",
+    
+    # 🟡 Suspicious result - "That's suspicious" 👀
+    "suspicious": "https://media.tenor.com/m/2701645392250261304.gif",
 }
 
 scan_semaphore = asyncio.Semaphore(MAX_CONCURRENT)
@@ -57,7 +75,7 @@ def is_url(text: str) -> bool:
     return text.strip().startswith(("http://", "https://"))
 
 def format_results(stats: dict, link: str = None) -> tuple:
-    """Format VirusTotal results with appropriate GIF and message."""
+    """Format VirusTotal results with appropriate GIF and message (plain text)."""
     malicious = stats.get("malicious", 0)
     suspicious = stats.get("suspicious", 0)
     harmless = stats.get("harmless", 0)
@@ -66,19 +84,19 @@ def format_results(stats: dict, link: str = None) -> tuple:
     if malicious > 0:
         verdict = "🔴 DANGEROUS"
         gif = GIFS["danger"]
-        caption_prefix = "⚠️ **DANGER DETECTED!** ⚠️\n\n"
+        caption_prefix = "⚠️ DANGER DETECTED! ⚠️\n\n"
     elif suspicious > 0:
         verdict = "🟡 SUSPICIOUS"
         gif = GIFS["suspicious"]
-        caption_prefix = "⚠️ **SUSPICIOUS FILE/URL** ⚠️\n\n"
+        caption_prefix = "⚠️ THAT'S SUSPICIOUS... 👀 ⚠️\n\n"
     else:
         verdict = "🟢 SAFE"
         gif = GIFS["safe"]
-        caption_prefix = "✅ **SAFE TO USE** ✅\n\n"
+        caption_prefix = "✅ SAFE TO USE ✅\n\n"
 
     msg = (
         f"{caption_prefix}"
-        "🔍 **VirusTotal Results**\n\n"
+        f"🔍 VirusTotal Results\n\n"
         f"🚨 Malicious: {malicious}\n"
         f"⚠️ Suspicious: {suspicious}\n"
         f"✅ Harmless: {harmless}\n"
@@ -87,7 +105,7 @@ def format_results(stats: dict, link: str = None) -> tuple:
     )
     
     if link:
-        msg += f"\n\n🔗 [View Full Report]({link})"
+        msg += f"\n\n🔗 View Full Report: {link}"
     
     return msg, gif
 
@@ -164,8 +182,7 @@ async def scan_hash(app: Client, message: Message, value: str):
             result_msg, result_gif = format_results(stats, vt_link)
             await message.reply_animation(
                 animation=result_gif,
-                caption=result_msg,
-                parse_mode="Markdown"
+                caption=result_msg
             )
         elif status == 404:
             await message.reply_text("❌ Hash not found in VirusTotal database.")
@@ -219,8 +236,7 @@ async def scan_url(app: Client, message: Message, value: str):
             result_msg, result_gif = format_results(stats, vt_link)
             await message.reply_animation(
                 animation=result_gif,
-                caption=result_msg,
-                parse_mode="Markdown"
+                caption=result_msg
             )
         elif status == 429:
             await message.reply_text("⏳ VirusTotal API rate limit reached. Please try again later.")
@@ -265,13 +281,26 @@ async def scan_file(app: Client, message: Message):
         caption="🔥 Uploading & scanning..."
     )
     
-    temp_name = f"temp_{datetime.now().timestamp()}_{doc.file_name}"
+    # Fixed: Sanitize filename (replace spaces and special chars)
+    safe_filename = doc.file_name.replace(" ", "_").replace("/", "_").replace("\\", "_") if doc.file_name else "uploaded_file"
+    temp_name = f"temp_{int(datetime.now().timestamp())}_{safe_filename}"
+    
+    # Fixed: Use absolute path in home directory
+    temp_path = os.path.join(os.path.expanduser("~"), temp_name)
     
     try:
-        await message.download(file_name=temp_name)
+        # Download file with error handling
+        logger.info(f"Downloading file to: {temp_path}")
+        downloaded_file = await message.download(file_name=temp_path)
+        
+        # Verify file exists
+        if not downloaded_file or not os.path.exists(temp_path):
+            raise FileNotFoundError(f"Download failed: {temp_path}")
+        
+        logger.info(f"File downloaded successfully: {temp_path}")
         
         async with aiohttp.ClientSession() as session:
-            with open(temp_name, "rb") as f:
+            with open(temp_path, "rb") as f:
                 form = aiohttp.FormData()
                 form.add_field("file", f, filename=doc.file_name)
                 status, submit = await vt_request(session, "POST", f"{VT_BASE}/files", data=form)
@@ -292,26 +321,33 @@ async def scan_file(app: Client, message: Message):
             result_msg, result_gif = format_results(stats, vt_link)
             await message.reply_animation(
                 animation=result_gif,
-                caption=result_msg,
-                parse_mode="Markdown"
+                caption=result_msg
             )
         elif status == 429:
             await message.reply_text("⏳ VirusTotal API rate limit reached. Please try again later.")
         else:
             await message.reply_text("❌ File analysis incomplete.")
+            
+    except FileNotFoundError as e:
+        logger.error(f"File not found error: {e}")
+        await cook_msg.delete()
+        await message.reply_text("❌ Failed to download file. Please try again with a smaller file.")
+    except PermissionError as e:
+        logger.error(f"Permission error: {e}")
+        await cook_msg.delete()
+        await message.reply_text("❌ Permission denied. Check Termux storage permissions.")
     except Exception as e:
         logger.error(f"File scan error: {e}")
+        await cook_msg.delete()
         await message.reply_text("❌ An error occurred during file scanning.")
-        try:
-            await cook_msg.delete()
-        except:
-            pass
     finally:
-        if os.path.exists(temp_name):
+        # Cleanup: Delete temp file
+        if os.path.exists(temp_path):
             try:
-                os.remove(temp_name)
+                os.remove(temp_path)
+                logger.info(f"Temp file cleaned up: {temp_path}")
             except Exception as e:
-                logger.warning(f"Could not delete temp file {temp_name}: {e}")
+                logger.warning(f"Could not delete temp file {temp_path}: {e}")
 
 # ================= CREATE APP =================
 
@@ -329,13 +365,12 @@ app = Client(
 async def start_cmd(app: Client, message: Message):
     """Handle /start command."""
     await message.reply_text(
-        "👋 **VirusTotal Telegram Bot**\n\n"
+        "👋 VirusTotal Telegram Bot\n\n"
         "Send:\n"
         "• File hash (MD5/SHA1/SHA256)\n"
         "• URL (http/https)\n"
         "• Upload file (≤32MB)\n\n"
-        "Powered by VirusTotal API.",
-        parse_mode="Markdown"
+        "Powered by VirusTotal API."
     )
 
 @app.on_message(filters.document)
@@ -373,6 +408,8 @@ def main():
     
     print("🚀 VirusTotal Bot starting...")
     print("🎬 Breaking Bad theme activated!")
+    print("👀 'That's suspicious' GIF added!")
+    print("📁 File scanning: Termux compatible!")
     app.run()
 
 if __name__ == "__main__":
