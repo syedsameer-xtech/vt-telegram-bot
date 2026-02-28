@@ -92,96 +92,53 @@ log = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────────────────────
 # 3. BREAKING BAD + BETTER CALL SAUL THEME
-#    Huge GIF pool — every character, every mood, never repeats
+#    Multiple GIFs per mood — bot picks one at random each time
 # ─────────────────────────────────────────────────────────────
 GIFS = {
-    # ── PREP — Saul Goodman getting the case ready ────────────
-    # "It's all good, man!" energy
+    # Saul Goodman — getting ready, reviewing the case
     "prep": [
-        "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",  # Saul pointing
-        "https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif",  # Saul on phone
-        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",  # Saul waving
-        "https://media.giphy.com/media/3ohc0RM5jvq5xT9pYQ/giphy.gif",  # Saul laughing
-        "https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif",  # Walter preparing
-        "https://media.giphy.com/media/3o85xH7OXRD8yvBDHy/giphy.gif",  # Saul suit fix
+        "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",
+        "https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif",
+        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
     ],
-
-    # ── COOK — Walter White in the lab ────────────────────────
-    # Hazmat suits, chemistry, Blue Sky
+    # Walter White — cooking in the lab
     "cook": [
-        "https://media.giphy.com/media/3ohzdYJK1wAdPWVk88/giphy.gif",  # Walter cooking
-        "https://media.giphy.com/media/xT9IgHqp9H6M4/giphy.gif",       # Lab work
-        "https://media.giphy.com/media/3o6Zt6gOiW4ChE1XCo/giphy.gif",  # Chemistry
-        "https://media.giphy.com/media/l0HlFZfztrzZNxkre/giphy.gif",   # Blue flame
-        "https://media.giphy.com/media/d9rGLfxrh9IgFCPfcP/giphy.gif",  # Walter serious
-        "https://media.giphy.com/media/3ohzdMPCHXcqzMFTPW/giphy.gif",  # Walter typing
+        "https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif",
+        "https://media.giphy.com/media/3ohzdYJK1wAdPWVk88/giphy.gif",
+        "https://media.giphy.com/media/xT9IgHqp9H6M4/giphy.gif",
     ],
-
-    # ── SAFE — Jesse Pinkman / Hank celebrating ───────────────
-    # "Yeah science bitch!" energy
+    # Jesse — "Yeah science!" / clean result
     "safe": [
-        "https://media.giphy.com/media/KIpm9dzD2OAK2p60Xu/giphy.gif",  # Jesse thumbs up
-        "https://media.giphy.com/media/3ohc14lCEdXHSpnnSU/giphy.gif",  # Jesse celebrating
-        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",  # Saul OK
-        "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",       # Jesse "Yeah!"
-        "https://media.giphy.com/media/3o6Zt0isNfbfW2ORKS/giphy.gif",  # Walter happy
-        "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif",   # Hank relieved
-        "https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif",   # Jesse dancing
+        "https://media.giphy.com/media/KIpm9dzD2OAK2p60Xu/giphy.gif",
+        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+        "https://media.giphy.com/media/3ohc14lCEdXHSpnnSU/giphy.gif",
     ],
-
-    # ── DANGER — Gus Fring / Walter threatening ───────────────
-    # Coldest, most menacing characters
+    # Gus Fring / Walter threatening — dangerous result
     "danger": [
-        "https://media.giphy.com/media/xT9IgG50Lg7russbGB/giphy.gif",  # Walter "I am danger"
-        "https://media.giphy.com/media/QNGHqtEdHDAcgDPJCj/giphy.gif",  # Gus stare
-        "https://media.giphy.com/media/3o6Zt11R527E2l64tW/giphy.gif",  # Walter tread lightly
-        "https://media.giphy.com/media/l4FGC0xGJqGMXSmjS/giphy.gif",   # Gus face reveal
-        "https://media.giphy.com/media/3ohs4pYObnkIqEFEso/giphy.gif",  # Walter angry
-        "https://media.giphy.com/media/l0HlAgJTVaAPHEhri/giphy.gif",   # Gus warning
-        "https://media.giphy.com/media/26BRwW3ckGjcZmsxO/giphy.gif",   # Walter "say my name"
+        "https://media.giphy.com/media/xT9IgG50Lg7russbGB/giphy.gif",
+        "https://media.giphy.com/media/QNGHqtEdHDAcgDPJCj/giphy.gif",
+        "https://media.giphy.com/media/3o6Zt11R527E2l64tW/giphy.gif",
     ],
-
-    # ── SUSPICIOUS — Mike Ehrmantraut watching ────────────────
-    # Silently judging, not impressed
+    # Mike Ehrmantraut — suspicious, watching, silent
     "sus": [
-        "https://media.giphy.com/media/l0HlQ7LRalQqdWfao/giphy.gif",   # Mike stare
-        "https://media.giphy.com/media/26BRtW4jOJxOMsKdi/giphy.gif",   # Mike side-eye
-        "https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif",  # Mike skeptical
-        "https://media.giphy.com/media/xT9IgFLBcm3Wi3LBBS/giphy.gif",  # Mike not happy
-        "https://media.giphy.com/media/3ohzdQ1IynzclJldUQ/giphy.gif",  # Mike thinking
-        "https://media.giphy.com/media/l0HlJGHoSF0yz0lsA/giphy.gif",   # Lalo suspicious
-        "https://media.giphy.com/media/26BRmgAhEDWERULle/giphy.gif",   # Mike disappointed
+        "https://media.giphy.com/media/l0HlQ7LRalQqdWfao/giphy.gif",
+        "https://media.giphy.com/media/26BRtW4jOJxOMsKdi/giphy.gif",
+        "https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif",
     ],
-
-    # ── ERROR — Saul / Jesse confused or panicking ────────────
-    # "No no no no no" energy
+    # Saul shrugging — error / something went wrong
     "err": [
-        "https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif",   # Saul shrug
-        "https://media.giphy.com/media/3o7TKF1fSIs1R19B8k/giphy.gif",  # Jesse panicking
-        "https://media.giphy.com/media/3ohjV0aGCHMODCPpRe/giphy.gif",  # Walter facepalm
-        "https://media.giphy.com/media/l0HlHCFDDmBxggc3S/giphy.gif",   # Jesse "what?"
-        "https://media.giphy.com/media/xT9IgvbwYnJtBLUHEY/giphy.gif",  # Saul confused
-        "https://media.giphy.com/media/3o7btNhMBytxAM6YBa/giphy.gif",  # Jesse facepalm
+        "https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif",
+        "https://media.giphy.com/media/3o7TKF1fSIs1R19B8k/giphy.gif",
     ],
-
-    # ── RATE LIMIT — Walter "I am the one who knocks" ─────────
-    # Power move energy
+    # Walter "I am the danger" — rate limit hit
     "ratelimit": [
-        "https://media.giphy.com/media/xT9IgG50Lg7russbGB/giphy.gif",  # "I am the danger"
-        "https://media.giphy.com/media/QNGHqtEdHDAcgDPJCj/giphy.gif",  # Gus cold stare
-        "https://media.giphy.com/media/3ohjV7CtjJSHDCyBeo/giphy.gif",  # Walter power
-        "https://media.giphy.com/media/26BRwW3ckGjcZmsxO/giphy.gif",  # "Say my name"
-        "https://media.giphy.com/media/l0HlAgJTVaAPHEhri/giphy.gif",  # Gus "slow down"
+        "https://media.giphy.com/media/xT9IgG50Lg7russbGB/giphy.gif",
+        "https://media.giphy.com/media/QNGHqtEdHDAcgDPJCj/giphy.gif",
     ],
-
-    # ── ALERT — Hector's bell / urgent warning ────────────────
-    # Something changed, pay attention!
+    # Watchlist alert — verdict changed
     "alert": [
-        "https://media.giphy.com/media/3ohzdYJK1wAdPWVk88/giphy.gif",  # Walter alarm
-        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",  # Saul urgent
-        "https://media.giphy.com/media/3o6Zt11R527E2l64tW/giphy.gif",  # Tread lightly
-        "https://media.giphy.com/media/3ohjV0aGCHMODCPpRe/giphy.gif",  # Walter alert
-        "https://media.giphy.com/media/xT9IgFLBcm3Wi3LBBS/giphy.gif",  # Mike on alert
+        "https://media.giphy.com/media/3ohzdYJK1wAdPWVk88/giphy.gif",
+        "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
     ],
 }
 
@@ -191,100 +148,41 @@ def gif(key: str) -> str:
     return random.choice(GIFS.get(key, GIFS["err"]))
 
 
-# ── Character-voiced messages — large pool, randomly picked ───
+# Character-voiced messages — randomly chosen each time for freshness
 PREP_MSGS = [
-    # Saul Goodman
     "👔 *Better Call Saul — he's reviewing your case file...*",
     "📋 *Saul Goodman & Associates on the case. Please hold.*",
     "🏛️ *It's all good, man! Saul is preparing the evidence...*",
     "💼 *Jimmy McGill is getting the paperwork ready...*",
-    "📞 *Saul's got people for this. Give him a second.*",
-    "🕶️ *Saul's gonna make this disappear — or confirm it's dirty.*",
-    # Kim Wexler
-    "⚖️ *Kim Wexler is reviewing the case. Quietly. Competently.*",
-    "📁 *Kim pulled an all-nighter preparing your file. She does that.*",
-    # Huell
-    "😌 *Huell is standing by the door. As always.*",
-    "🪑 *Huell is patiently waiting... he's good at that.*",
-    # Nacho
-    "🚗 *Nacho is doing recon. Stay calm.*",
 ]
 
 COOK_MSGS = [
-    # Walter White
     "🥼 *Walter just put on his hazmat suit. Stand back.*",
     "⚗️ *The Blue Sky analysis is in progress. 99.1% pure.*",
     "🔬 *Say my name... I am the one who scans.*",
     "👨‍🔬 *Mr. White is in the lab. Do. Not. Interrupt. Him.*",
     "💊 *Cooking the analysis. This is going to be pure.*",
-    "🧪 *Walter is calculating the yield. This takes precision.*",
-    "☢️ *Heisenberg is in the zone. Do not disturb.*",
-    # Jesse
-    "🧑‍🔬 *Jesse is doing the thing. Yeah, science bitch!*",
-    "🔥 *Jesse fired up the burners. Analysis incoming.*",
-    "😤 *Jesse: 'I've been doing this for years, yo.'*",
-    # Gale
-    "🎵 *Gale is humming while running the analysis...*",
-    "📓 *Gale took detailed notes. Meticulous as always.*",
 ]
 
 SAFE_INTROS = [
-    # Jesse
     "✅ *Yeah science, bitch! It's clean!*",
     "✅ *Jesse would approve. This one's pure.*",
-    "✅ *Jesse: 'yo, this is totally fine, like, for real.'*",
-    "✅ *Jesse pumps his fist. Clean product, clean conscience.*",
-    # Hank
     "✅ *Hank ran the plates — nothing suspicious here.*",
-    "✅ *Hank: 'I got nothing. It's clean, Marie.'*",
-    "✅ *Hank would put this on his wall next to his minerals.*",
-    # Saul
     "✅ *Saul says: My client is completely innocent!*",
-    "✅ *Saul: 'I knew it was clean. That's why you called me.'*",
-    # Kim
-    "✅ *Kim reviewed it. Her verdict: clean. She's never wrong.*",
-    # Walter
-    "✅ *Walter nods. 'As expected. I do not make mistakes.'*",
-    # Gale
-    "✅ *Gale wrote a poem about how clean this is. It's a haiku.*",
 ]
 
 DANGER_INTROS = [
-    # Walter White
     "☣️ *Gus Fring would like a word with you.*",
     "☣️ *I am the danger. And THIS is the danger.*",
     "☣️ *You know who I am? I AM the one who warns you.*",
     "☣️ *Tread lightly. This one is cooking up trouble.*",
-    "☣️ *Walter: 'I watched Jane overdose. I watched this URL too.'*",
-    "☣️ *Heisenberg has spoken. Walk away. Now.*",
-    # Gus Fring
-    "☣️ *Gus Fring smiled at this. That means run.*",
-    "☣️ *Gus: 'I will kill your wife. I will kill your son.' Delete this.*",
-    "☣️ *Gus peeled his face off. It's that bad.*",
-    # Lalo Salamanca
-    "☣️ *Lalo Salamanca is smiling at you. That is very bad.*",
-    "☣️ *Lalo showed up uninvited. Just like this malware.*",
-    # Tuco
-    "☣️ *TIGHT TIGHT TIGHT — this is NOT tight. This is dangerous.*",
-    "☣️ *Tuco is banging the table. He did not like what he saw.*",
 ]
 
 SUS_INTROS = [
-    # Mike
     "👀 *Mike has eyes on this. Something is off.*",
     "👀 *Mike Ehrmantraut doesn't like what he sees...*",
     "👀 *Something is cooking and it ain't Blue Sky...*",
     "👀 *Half measures, Walter. This needs watching.*",
-    "👀 *Mike: 'No more half measures.' Keep your guard up.*",
-    "👀 *Mike is already three steps ahead of this threat.*",
-    "👀 *Mike sat across the street all night watching this URL.*",
-    # Hector Salamanca
-    "👀 *DING DING DING — Hector's bell is ringing. Be careful.*",
-    "👀 *Hector rang his bell twice. That's the suspicious signal.*",
-    # Nacho
-    "👀 *Nacho sniffed this out. Something is not right here.*",
-    # Lalo
-    "👀 *Lalo is still in the house. Do not let your guard down.*",
 ]
 
 
@@ -935,8 +833,8 @@ async def scan_ip(update: Update, value: str, bypass_cache: bool = False):
             await _send_result(update, txt, gif_key, link, scan_id)
             return
 
-    await _prep_anim(update, f"🕵️ *Mike is running surveillance on* `{value}`*...*")
-    cook = await _cook_anim(update, f"🔬 *Mike does not miss. Cross-checking* `{value}`*...*")
+    await _prep_anim(update, "🕵️ *Mike is running surveillance on this IP...*")
+    cook = await _cook_anim(update, "🔬 *Mike does not miss. Cross-checking...*")
 
     try:
         status, data = await vt_get(f"ip_addresses/{value}")
@@ -1435,10 +1333,9 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == "cb_report":
         class FakeUpdate:
-            def __init__(self, msg, user):
-                self.message        = msg
-                self.effective_user = user
-        await cmd_report(FakeUpdate(q.message, q.from_user), context)
+            message        = q.message
+            effective_user = q.from_user
+        await cmd_report(FakeUpdate(), context)
 
     # ── Rescan ────────────────────────────────────────────────
     elif data.startswith("rescan:"):
@@ -1449,11 +1346,10 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         class FakeUpdate:
-            def __init__(self, msg, user):
-                self.message        = msg
-                self.effective_user = user
+            message        = q.message
+            effective_user = q.from_user
 
-        fake   = FakeUpdate(q.message, q.from_user)
+        fake   = FakeUpdate()
         kind   = row["kind"]
         target = row["target"]
 
@@ -1471,12 +1367,6 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             htype = kind.split(":")[1] if ":" in kind else "sha256"
             await cache.delete(f"hash:{target.lower()}")
             await scan_hash(fake, target, htype)
-        elif "file" in kind:
-            await q.message.reply_text(
-                "📎 *To rescan a file, just upload it again.*\n"
-                "_Files aren't stored — only the result is. Saul's orders._",
-                parse_mode=ParseMode.MARKDOWN,
-            )
 
     # ── Share ─────────────────────────────────────────────────
     elif data.startswith("share:"):
